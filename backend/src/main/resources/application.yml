@@ -9,9 +9,9 @@ spring:
     deserialization:
       fail-on-unknown-properties: false
   datasource:
-#    url: jdbc:mysql://api-database.crhhlgnjymul.us-east-2.rds.amazonaws.com:3306/ApiSemNome
+#    url: jdbc:mysql://safra-technee.cg3pvgrq8xcs.us-east-2.rds.amazonaws.com:3306/safra-technee
+#    host: safra-technee.cg3pvgrq8xcs.us-east-2.rds.amazonaws.com
     url: jdbc:mysql://localhost:3306/safra-technee
-#    host: api-database.crhhlgnjymul.us-east-2.rds.amazonaws.com
     host: localhost
     port: 3306
     database: safra-technee
