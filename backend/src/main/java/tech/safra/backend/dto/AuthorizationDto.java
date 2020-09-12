@@ -3,19 +3,16 @@ package tech.safra.backend.dto;
 import lombok.Getter;
 import lombok.Setter;
 import tech.safra.backend.entity.Consumer;
+import tech.safra.backend.entity.Partner;
 
 import javax.persistence.ManyToOne;
 
 @Getter
 @Setter
-public class ConsumerAccountDto {
+public class AuthorizationDto {
 
     private Long id;
 
-    private Consumer consumer;
-
-    private String displayName;
-    private String clientId;
-    private String secret;
+    private Partner partner;
 
 }

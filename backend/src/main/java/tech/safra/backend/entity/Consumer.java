@@ -1,8 +1,12 @@
 package tech.safra.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @ToString
 @Entity
@@ -21,6 +25,18 @@ public class Consumer {
     private String dob;
     private String cpf;
     private String rg;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "consumer")
+    private List<Account> accounts;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "consumer")
+    private List<Authorization> authorizations;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "consumer")
+    private List<Default> defaults;
 
     public Long getId() {
         return id;
@@ -86,4 +102,19 @@ public class Consumer {
         this.rg = rg;
     }
 
+    public List<Account> getAccounts() {
+        return accounts;
+    }
+
+    public void setAccounts(List<Account> accounts) {
+        this.accounts = accounts;
+    }
+
+    public List<Authorization> getAuthorizations() {
+        return authorizations;
+    }
+
+    public void setAuthorizations(List<Authorization> authorizations) {
+        this.authorizations = authorizations;
+    }
 }

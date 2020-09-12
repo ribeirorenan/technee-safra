@@ -1,18 +1,20 @@
 package tech.safra.backend.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.ToString;
 
 import javax.persistence.*;
 
 @ToString
 @Entity
-@Table(name = "consumer_partners")
-public class ConsumerPartner {
+@Table(name = "authorizations")
+public class Authorization {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne
     private Consumer consumer;
 
