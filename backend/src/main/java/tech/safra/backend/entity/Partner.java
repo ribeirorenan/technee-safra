@@ -6,13 +6,14 @@ import javax.persistence.*;
 
 @ToString
 @Entity
-@Table(name = "user")
-public class User {
+@Table(name = "partners")
+public class Partner {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private String url;
 
     public Long getId() {
         return id;
@@ -29,4 +30,13 @@ public class User {
     public void setName(String name) {
         this.name = name;
     }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
 }

@@ -11,7 +11,7 @@ spring:
   datasource:
 #    url: jdbc:mysql://safra-technee.cg3pvgrq8xcs.us-east-2.rds.amazonaws.com:3306/safra-technee
 #    host: safra-technee.cg3pvgrq8xcs.us-east-2.rds.amazonaws.com
-    url: jdbc:mysql://localhost:3306/safra-technee
+    url: jdbc:mysql://localhost:3306/safra-technee?serverTimezone=UTC
     host: localhost
     port: 3306
     database: safra-technee
@@ -27,6 +27,7 @@ spring:
     jpa:
       hibernate:
         ddl-auto: update
+
 
 #  security:
 #    oauth2:
