@@ -24,23 +24,23 @@ spring:
     maxActive: 30
     maxPoolSize: 100
     validationQuery: SELECT 1
-    hibernate:
-      show-sql: false
-  thymeleaf:
-    cache: false
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          key-value: classpath:jwt.pub
-          user-name-claim-name: user_name
-          authorities-claim-name: authorities
-          authority-prefix: "ROLE_"
-      custom:
-        main-authority: ADMIN
-        access-authority: USER
+    jpa:
+      hibernate:
+        ddl-auto: update
 
-management:
-  endpoints:
-    web:
-      base-path: /management
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          key-value: classpath:jwt.pub
+#          user-name-claim-name: user_name
+#          authorities-claim-name: authorities
+#          authority-prefix: "ROLE_"
+#      custom:
+#        main-authority: ADMIN
+#        access-authority: USER
+
+#management:
+#  endpoints:
+#    web:
+#      base-path: /management

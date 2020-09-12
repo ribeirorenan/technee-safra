@@ -3,7 +3,7 @@ Repositório para armazenamento de código fonte e documentação do projeto de 
 
 
 ## Executar a api localmente (backend)
-- Ter uma instância do MySQL v5.7 rodando
+- Ter uma instância do MySQL v8.0.17 rodando
 - Criar um database 'safra-technee'
 - Configurar o usuário e senha no application.yml
 - Acesssar em http://localhost:8080/ 
