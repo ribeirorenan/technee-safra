@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import tech.safra.backend.entity.Account;
 import tech.safra.backend.entity.Authorization;
 import tech.safra.backend.entity.Consumer;
+import tech.safra.backend.entity.Partner;
 import tech.safra.backend.exception.NotFoundException;
 import tech.safra.backend.repository.AccountRepository;
 import tech.safra.backend.repository.AuthorizationRepository;
@@ -35,8 +36,16 @@ public class AuthorizationService {
         return authorizationRepository.findAllByConsumer(consumer);
     }
 
+    public List<Authorization> getAllByPartner(Partner partner) {
+        return authorizationRepository.findAllByPartner(partner);
+    }
+
     public Authorization getByConsumerAndId(Consumer consumer, Long id) {
         return authorizationRepository.findByConsumerAndId(consumer, id).orElseThrow(() -> new NotFoundException("Authorization not found", null));
+    }
+
+    public Authorization getByPartnerAndId(Partner partner, Long id) {
+        return authorizationRepository.findByPartnerAndId(partner, id).orElseThrow(() -> new NotFoundException("Authorization not found", null));
     }
 
     public void deleteById(Long id) {

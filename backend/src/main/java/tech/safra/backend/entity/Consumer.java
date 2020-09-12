@@ -117,4 +117,8 @@ public class Consumer {
     public void setAuthorizations(List<Authorization> authorizations) {
         this.authorizations = authorizations;
     }
+
+    public List<Default> getDefaults() { return defaults; }
+
+    public void setDefaults(List<Default> defaults) { this.defaults = defaults; }
 }

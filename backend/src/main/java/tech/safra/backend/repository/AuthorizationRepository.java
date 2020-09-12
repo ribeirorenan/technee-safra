@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import tech.safra.backend.entity.Account;
 import tech.safra.backend.entity.Authorization;
 import tech.safra.backend.entity.Consumer;
+import tech.safra.backend.entity.Partner;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,4 +14,7 @@ import java.util.Optional;
 public interface AuthorizationRepository extends JpaRepository<Authorization, Long> {
     List<Authorization> findAllByConsumer(Consumer consumer);
     Optional<Authorization> findByConsumerAndId(Consumer consumer, Long id);
+
+    List<Authorization> findAllByPartner(Partner partner);
+    Optional<Authorization> findByPartnerAndId(Partner partner, Long id);
 }

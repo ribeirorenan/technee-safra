@@ -5,14 +5,12 @@ import lombok.Setter;
 import tech.safra.backend.entity.Consumer;
 import tech.safra.backend.entity.Partner;
 
-import javax.persistence.ManyToOne;
-
 @Getter
 @Setter
-public class AuthorizationDto {
+public class PartnerAuthorizationDto {
 
     private Long id;
 
-    private Partner partner;
+    private Consumer consumer;
 
 }
