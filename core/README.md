@@ -1,4 +1,4 @@
-# api-safra-risk
+# API Safra Risk
 
 API contendo o core do Safra Risk.
 
