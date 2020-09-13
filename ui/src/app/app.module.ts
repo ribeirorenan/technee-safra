@@ -14,6 +14,7 @@ import { HomeAuthorizationsComponent } from './pages/consumer/home/home-authoriz
 import { AddAccountComponent } from './pages/consumer/home/add-account/add-account.component';
 import { ManageAuthComponent } from './pages/consumer/home/home-authorizations/manage-auth/manage-auth.component';
 import { AuthCardComponent } from './pages/consumer/home/home-authorizations/auth-card/auth-card.component';
+import { ManageAccountComponent } from './pages/consumer/home/home-accounts/account-card/manage-account/manage-account.component';
 
 
 @NgModule({
@@ -27,6 +28,7 @@ import { AuthCardComponent } from './pages/consumer/home/home-authorizations/aut
     HomeComponent,
     ManageAuthComponent,
     AuthCardComponent,
+    ManageAccountComponent
   ],
   imports: [
     BrowserModule,

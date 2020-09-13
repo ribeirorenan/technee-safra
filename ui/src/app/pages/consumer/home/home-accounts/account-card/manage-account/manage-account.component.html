@@ -1,0 +1,34 @@
+<nb-card>
+    <nb-card-header>
+        <div class="d-flex">
+            <div>
+                Gerenciamento de Conta
+            </div>
+            <div class="ml-auto">
+                <nb-icon icon="arrow-back" style="cursor: pointer;" (click)="backToHome()"></nb-icon>
+            </div>
+       </div>
+    </nb-card-header>
+    <nb-card-body>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-sm-8">
+                    <p> <b>Usuário: </b> José Silva</p> 
+                </div>
+                
+                <div class="col-sm-8">
+                    <p> <b>Conta: </b> xxx-xxx-xxx</p> 
+                </div>
+            </div>
+        </div>
+    </nb-card-body>
+    <nb-card-footer>
+        <div class="container">
+            <div class="row">
+                <div class="col text-center text-justify-center">
+                    <button nbButton shape="rectangle" status="danger">Remover Conta</button>
+                </div>
+            </div>
+        </div>
+    </nb-card-footer>
+</nb-card>
