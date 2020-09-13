@@ -2,22 +2,18 @@
 
 Aplicativo B2C (visão mobile) com o objetivo de permitir ao usuário o gerenciamento de suas contas bancárias e permissões concedidas.
 
-## Angular CLI Version
+## Rodando o projeto localmente
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.4.
+O projeto foi criado a partir da v9.1.4 do Angular CLI. 
+Para servir o projeto em modo de desenvolvimento execute o seguinte comando na pasta **consumer-ui** (com o Angular CLI instalado):
 
-## Development server
+* ng serve
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## Deploy da aplicação
 
-## Code scaffolding
+Durante o desenvolvimento fizemos o deploy através do serviço Amazon Simple Storage Service (S3).
+Para gerar os arquivos de deploy, execute o seguinte comando na pasta **consumer-ui**
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+* ng build --prod
 
-## Build
-
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+Os arquivos finais estarão dentro da pasta **consumer-ui/dist**. Basta fazer o deploy desses arquivos para o serviço de preferência.
