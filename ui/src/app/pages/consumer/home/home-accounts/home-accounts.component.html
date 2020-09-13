@@ -11,7 +11,9 @@
     </nb-card-header>
     <nb-card-body>
         <div class="d-flex flex-row justify-content-between flex-wrap">
-            <app-account-card></app-account-card>
+            <ng-container *ngFor="let account of accounts">
+                <app-account-card [account]="account"></app-account-card>
+            </ng-container>
         </div>
     </nb-card-body>
 </nb-card>
