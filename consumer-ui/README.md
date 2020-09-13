@@ -2,12 +2,19 @@
 
 Aplicativo B2C (visão mobile) com o objetivo de permitir ao usuário o gerenciamento de suas contas bancárias e permissões concedidas.
 
-## Rodando o projeto localmente
+## Requisitos para executar a api localmente
+- Possuir Angular CLI instalado. Versão recomendada: v9.1.4
 
-O projeto foi criado a partir da v9.1.4 do Angular CLI. 
+## Rodando o projeto localmente
 Para servir o projeto em modo de desenvolvimento execute o seguinte comando na pasta **consumer-ui** (com o Angular CLI instalado):
 
 * ng serve
+
+E acesse na seguinte URL:
+
+* http://localhost:4200/pages/consumer/home
+
+Caso entre pela interface Desktop, mude para visão Mobile para ter a experiência adequada.
 
 ## Deploy da aplicação
 
