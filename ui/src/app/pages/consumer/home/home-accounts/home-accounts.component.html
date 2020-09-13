@@ -1,0 +1,17 @@
+<nb-card>
+    <nb-card-header>
+        <div class="d-flex">
+            <div>
+                Contas e Carteiras
+            </div>
+            <div class="ml-auto">
+                <nb-icon icon="plus-circle" style="cursor: pointer;" (click)="openAddAccount()"></nb-icon>
+            </div>
+       </div>
+    </nb-card-header>
+    <nb-card-body>
+        <div class="d-flex flex-row justify-content-between flex-wrap">
+            <app-account-card></app-account-card>
+        </div>
+    </nb-card-body>
+</nb-card>
