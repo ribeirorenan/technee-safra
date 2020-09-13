@@ -1,0 +1,22 @@
+---
+# Source: airflow/charts/postgresql/templates/svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: orchestration-postgresql
+  namespace: safrarisk
+  labels:
+    app: postgresql
+    chart: postgresql-6.3.12
+    release: "orchestration"
+    heritage: "Helm"
+spec:
+  type: ClusterIP
+  ports:
+  - name: postgresql
+    port: 5432
+    targetPort: postgresql
+  selector:
+    app: postgresql
+    release: "orchestration"
+    role: master

@@ -1,0 +1,137 @@
+---
+# Source: airflow/templates/webserver/webserver-deployment.yaml
+################################
+## Airflow Webserver Deployment
+#################################
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: orchestration-webserver
+  namespace: safrarisk
+  labels:
+    tier: airflow
+    component: webserver
+    release: orchestration
+    chart: "airflow-0.17.0"
+    heritage: Helm
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      tier: airflow
+      component: webserver
+      release: orchestration
+  template:
+    metadata:
+      labels:
+        tier: airflow
+        component: webserver
+        release: orchestration
+      annotations:
+        checksum/metadata-secret: 71c47e3694cc108d6604997f76764e0477a8b5c251db21c0c6031506b97aeb0f
+        checksum/pgbouncer-config-secret: ed289c0e3972684b92f136223f92ed6b71ed333efaa7953da8465316bacc3575
+        checksum/airflow-config: d8ee1a6499b35098aceca6796e25502589927454179e4017a23aa1eaf4554f1d
+    spec:
+      nodeSelector:
+        {}
+      affinity:
+        {}
+      tolerations:
+        []
+      restartPolicy: Always
+      serviceAccountName: orchestration-webserver-serviceaccount
+      securityContext:
+        runAsUser: 100
+      initContainers:
+        - name: wait-for-airflow-migrations
+          image: astronomerinc/ap-airflow:1.10.7-alpine3.10
+          imagePullPolicy: IfNotPresent
+          args: ["airflow-migration-spinner", "--timeout=60"]
+          env:          
+            # Hard Coded Airflow Envs
+            - name: ASTRONOMER__AIRFLOW__WORKER_LOG_RETENTION
+              value: "3"
+            - name: AIRFLOW__CORE__FERNET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: orchestration-fernet-key
+                  key: fernet-key
+            - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+              valueFrom:
+                secretKeyRef:
+                  name: orchestration-airflow-metadata
+                  key: connection
+            - name: AIRFLOW_CONN_AIRFLOW_DB
+              valueFrom:
+                secretKeyRef:
+                  name: orchestration-airflow-metadata
+                  key: connection
+      containers:
+        - name: webserver
+          image: astronomerinc/ap-airflow:1.10.7-alpine3.10
+          imagePullPolicy: IfNotPresent
+          args: ["airflow", "webserver"]
+          resources:
+            {}
+          volumeMounts:
+            - name: config
+              mountPath: "/usr/local/airflow/airflow.cfg"
+              subPath: airflow.cfg
+              readOnly: true
+            - name: config
+              mountPath: "/usr/local/airflow/webserver_config.py"
+              subPath: webserver_config.py
+              readOnly: true
+            - name: config
+              mountPath: "/usr/local/airflow/config/airflow_local_settings.py"
+              subPath: airflow_local_settings.py
+              readOnly: true
+          ports:
+            - name: webserver-ui
+              containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 15
+            timeoutSeconds: 30
+            failureThreshold: 20
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 15
+            timeoutSeconds: 30
+            failureThreshold: 20
+            periodSeconds: 5          
+          env:
+            # Dynamically created environment variables
+            # Dynamically created secret envs
+            
+            # Hard Coded Airflow Envs
+            - name: ASTRONOMER__AIRFLOW__WORKER_LOG_RETENTION
+              value: "3"
+            - name: AIRFLOW__CORE__FERNET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: orchestration-fernet-key
+                  key: fernet-key
+            - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+              valueFrom:
+                secretKeyRef:
+                  name: orchestration-airflow-metadata
+                  key: connection
+            - name: AIRFLOW_CONN_AIRFLOW_DB
+              valueFrom:
+                secretKeyRef:
+                  name: orchestration-airflow-metadata
+                  key: connection
+      volumes:
+        - name: config
+          configMap:
+            name: orchestration-airflow-config

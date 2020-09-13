@@ -1,0 +1,34 @@
+---
+# Source: airflow/templates/statsd/statsd-service.yaml
+################################
+## Airflow StatsD Service
+#################################
+kind: Service
+apiVersion: v1
+metadata:
+  name: orchestration-statsd
+  namespace: safrarisk
+  labels:
+    tier: airflow
+    component: statsd
+    release: orchestration
+    chart: "airflow-0.17.0"
+    heritage: Helm
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9102"
+spec:
+  type: ClusterIP
+  selector:
+    tier: airflow
+    component: statsd
+    release: orchestration
+  ports:
+    - name: statsd-ingest
+      protocol: UDP
+      port: 9125
+      targetPort: 9125
+    - name: statsd-scrape
+      protocol: TCP
+      port: 9102
+      targetPort: 9102

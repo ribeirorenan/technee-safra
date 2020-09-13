@@ -1,0 +1,103 @@
+---
+# Source: airflow/templates/configmap.yaml
+################################
+## Airflow ConfigMap
+#################################
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: orchestration-airflow-config
+  namespace: safrarisk
+  labels:
+    tier: airflow
+    component: config
+    release: orchestration
+    chart: "airflow-0.17.0"
+    heritage: Helm
+data:
+  # These are system-specified config overrides.
+  airflow.cfg: |
+    [core]
+    load_examples = False
+    colored_console_log = False
+    executor = KubernetesExecutor
+
+    [webserver]
+    enable_proxy_fix = True
+    expose_config = True
+    rbac = True
+
+    [celery]
+    default_queue = celery
+
+    [scheduler]
+    scheduler_heartbeat_sec = 5
+    statsd_on = True
+    statsd_port = 9125
+    statsd_prefix = airflow
+    statsd_host = orchestration-statsd
+    # Restart Scheduler every 41460 seconds (11 hours 31 minutes)
+    # The odd time is chosen so it is not always restarting on the same "hour" boundary
+    run_duration = 41460
+
+    [kubernetes]
+    namespace = safrarisk
+    airflow_configmap = orchestration-airflow-config
+    airflow_local_settings_configmap = orchestration-airflow-config
+    worker_container_repository = astronomerinc/ap-airflow
+    worker_container_tag = 
+    worker_container_image_pull_policy = IfNotPresent
+    worker_service_account_name = orchestration-worker-serviceaccount
+    image_pull_secrets = orchestration-registry
+    dags_in_image = True
+    delete_worker_pods = True
+
+    [kubernetes_secrets]
+    AIRFLOW__CORE__SQL_ALCHEMY_CONN = orchestration-airflow-metadata=connection
+    AIRFLOW__CORE__FERNET_KEY = orchestration-fernet-key=fernet-key
+
+    [kubernetes_labels]
+    tier = airflow
+    component = worker
+    release = orchestration
+    platform = 
+    workspace = 
+
+    [astronomer]
+
+  webserver_config.py: |
+    import os
+    from airflow import configuration as conf
+    from flask_appbuilder.security.manager import AUTH_REMOTE_USER
+    basedir = os.path.abspath(os.path.dirname(__file__))
+
+    # The SQLAlchemy connection string.
+    SQLALCHEMY_DATABASE_URI = conf.get('core', 'SQL_ALCHEMY_CONN')
+
+    # Flask-WTF flag for CSRF
+    CSRF_ENABLED = True
+
+    # ----------------------------------------------------
+    # AUTHENTICATION CONFIG
+    # ----------------------------------------------------
+  airflow_local_settings.py: |
+    from airflow.contrib.kubernetes.pod import Pod
+    from airflow.configuration import conf
+
+
+    def pod_mutation_hook(pod: Pod):
+
+        extra_labels = {
+            "kubernetes_executor": "False",
+            "kubernetes_pod_operator": "False"
+        }
+
+        if 'airflow-worker' in pod.labels.keys() or \
+                conf.get('core', 'EXECUTOR') == "KubernetesExecutor":
+            extra_labels["kubernetes_executor"] = "True"
+        else:
+            extra_labels["kubernetes_pod_operator"] = "True"
+
+        pod.labels.update(extra_labels)
+        pod.tolerations += []
+        pod.affinity.update({})

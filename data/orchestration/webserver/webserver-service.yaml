@@ -1,0 +1,27 @@
+---
+# Source: airflow/templates/webserver/webserver-service.yaml
+################################
+## Airflow Webserver Service
+#################################
+kind: Service
+apiVersion: v1
+metadata:
+  name: orchestration-webserver
+  namespace: safrarisk
+  labels:
+    tier: airflow
+    component: webserver
+    release: orchestration
+    chart: "airflow-0.17.0"
+    heritage: Helm
+spec:
+  type: ClusterIP
+  selector:
+    tier: airflow
+    component: webserver
+    release: orchestration
+  ports:
+    - name: airflow-ui
+      protocol: TCP
+      port: 8080
+      targetPort: 8080

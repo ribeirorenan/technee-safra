@@ -1,0 +1,182 @@
+---
+# Source: airflow/templates/scheduler/scheduler-deployment.yaml
+################################
+## Airflow Scheduler Deployment/StatefulSet
+#################################
+
+# Are we using a local/sequenial executor?
+# Are we using the kubernetes executor?
+# Is persistence enabled on the _workers_?
+# This is important because in $local mode, the scheduler assumes the role of the worker
+# If we're using a StatefulSet
+# If we're using elasticsearch logging
+
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: orchestration-scheduler
+  namespace: safrarisk
+  labels:
+    tier: airflow
+    component: scheduler
+    release: orchestration
+    chart: "airflow-0.17.0"
+    heritage: Helm
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      tier: airflow
+      component: scheduler
+      release: orchestration
+  template:
+    metadata:
+      labels:
+        tier: airflow
+        component: scheduler
+        release: orchestration
+      annotations:
+        checksum/metadata-secret: 71c47e3694cc108d6604997f76764e0477a8b5c251db21c0c6031506b97aeb0f
+        checksum/result-backend-secret: 3d1f7654bdd410ff8ad4c2e71024e5d41a70d25d69e8c3b645bf1e85dc8ce5cb
+        checksum/pgbouncer-config-secret: ed289c0e3972684b92f136223f92ed6b71ed333efaa7953da8465316bacc3575
+        checksum/airflow-config: d8ee1a6499b35098aceca6796e25502589927454179e4017a23aa1eaf4554f1d
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+    spec:
+      nodeSelector:
+        {}
+      affinity:
+        {}
+      tolerations:
+        []
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 10
+      serviceAccountName: orchestration-scheduler-serviceaccount
+      securityContext:
+        runAsUser: 100
+        fsGroup: 101
+      initContainers:
+        - name: run-airflow-migrations
+          image: astronomerinc/ap-airflow:1.10.7-alpine3.10
+          imagePullPolicy: IfNotPresent
+          args: ["airflow", "upgradedb"]
+          env:          
+            # Hard Coded Airflow Envs
+            - name: ASTRONOMER__AIRFLOW__WORKER_LOG_RETENTION
+              value: "3"
+            - name: AIRFLOW__CORE__FERNET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: orchestration-fernet-key
+                  key: fernet-key
+            - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+              valueFrom:
+                secretKeyRef:
+                  name: orchestration-airflow-metadata
+                  key: connection
+            - name: AIRFLOW_CONN_AIRFLOW_DB
+              valueFrom:
+                secretKeyRef:
+                  name: orchestration-airflow-metadata
+                  key: connection
+      containers:
+        # Always run the main scheduler container.
+        - name: scheduler
+          image: astronomerinc/ap-airflow:1.10.7-alpine3.10
+          imagePullPolicy: IfNotPresent
+          args: ["airflow", "scheduler"]          
+          env:
+            # Dynamically created environment variables
+            # Dynamically created secret envs
+            
+            # Hard Coded Airflow Envs
+            - name: ASTRONOMER__AIRFLOW__WORKER_LOG_RETENTION
+              value: "3"
+            - name: AIRFLOW__CORE__FERNET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: orchestration-fernet-key
+                  key: fernet-key
+            - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+              valueFrom:
+                secretKeyRef:
+                  name: orchestration-airflow-metadata
+                  key: connection
+            - name: AIRFLOW_CONN_AIRFLOW_DB
+              valueFrom:
+                secretKeyRef:
+                  name: orchestration-airflow-metadata
+                  key: connection
+          # If the scheduler stops heartbeating for 5 minutes (10*30s) kill the
+          # scheduler and let Kubernetes restart it.
+          # Use the same for readiness and liveness.
+          readinessProbe:
+            initialDelaySeconds: 10
+            timeoutSeconds: 30
+            failureThreshold: 10
+            periodSeconds: 30
+            exec:
+              command:
+              - /usr/bin/env
+              - AIRFLOW__CORE__LOGGING_LEVEL=ERROR
+              - python3
+              - -Wignore
+              - -c
+              - |
+                from airflow.jobs.scheduler_job import SchedulerJob
+                from airflow.utils.db import create_session
+                from airflow.utils.net import get_hostname
+                import sys
+
+                with create_session() as session:
+                  job = session.query(SchedulerJob).filter_by(hostname=get_hostname()).order_by(SchedulerJob.latest_heartbeat.desc()).limit(1).first()
+                sys.exit(0 if job.is_alive() else 1)
+          livenessProbe:
+            initialDelaySeconds: 10
+            timeoutSeconds: 30
+            failureThreshold: 10
+            periodSeconds: 30
+            exec:
+              command:
+              - /usr/bin/env
+              - AIRFLOW__CORE__LOGGING_LEVEL=ERROR
+              - python3
+              - -Wignore
+              - -c
+              - |
+                from airflow.jobs.scheduler_job import SchedulerJob
+                from airflow.utils.db import create_session
+                from airflow.utils.net import get_hostname
+                import sys
+
+                with create_session() as session:
+                  job = session.query(SchedulerJob).filter_by(hostname=get_hostname()).order_by(SchedulerJob.latest_heartbeat.desc()).limit(1).first()
+                sys.exit(0 if job.is_alive() else 1)
+          resources:
+            {}
+          volumeMounts:
+            - name: logs
+              mountPath: "/usr/local/airflow/logs"
+            - name: config
+              mountPath: "/usr/local/airflow/airflow.cfg"
+              subPath: airflow.cfg
+              readOnly: true
+            - name: config
+              mountPath: "/usr/local/airflow/config/airflow_local_settings.py"
+              subPath: airflow_local_settings.py
+              readOnly: true
+        # Always start the garbage collector sidecar.
+        - name: scheduler-gc
+          image: astronomerinc/ap-airflow:1.10.7-alpine3.10
+          imagePullPolicy: IfNotPresent
+          args: ["/usr/local/bin/clean-airflow-logs"]
+          volumeMounts:
+            - name: logs
+              mountPath: "/usr/local/airflow/logs"
+      volumes:
+        - name: config
+          configMap:
+            name: orchestration-airflow-config
+        - name: logs
+          emptyDir: {}

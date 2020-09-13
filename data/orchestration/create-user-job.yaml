@@ -1,0 +1,88 @@
+---
+# Source: airflow/templates/create-user-job.yaml
+################################
+## Airflow Create User Job
+#################################
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: orchestration-create-user
+  namespace: safrarisk
+  labels:
+    tier: airflow
+    component: create-user-job
+    release: orchestration
+    chart: "airflow-0.17.0"
+    heritage: Helm
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      labels:
+        tier: airflow
+        component: create-user-job
+        release: orchestration
+      annotations:
+    spec:
+      securityContext:
+        runAsUser: 100
+      restartPolicy: OnFailure
+      nodeSelector:
+        {}
+      affinity:
+        {}
+      tolerations:
+        []
+      containers:
+        - name: create-user
+          image: astronomerinc/ap-airflow:1.10.7-alpine3.10
+          imagePullPolicy: IfNotPresent
+          args:
+            - "airflow"
+            - "create_user"
+            - "-r"
+            - Admin
+            - "-u"
+            - admin
+            - "-e"
+            - admin@example.com
+            - "-f"
+            - admin
+            - "-l"
+            - user
+            - "-p"
+            - admin          
+          env:
+            # Dynamically created environment variables
+            # Dynamically created secret envs
+            
+            # Hard Coded Airflow Envs
+            - name: ASTRONOMER__AIRFLOW__WORKER_LOG_RETENTION
+              value: "3"
+            - name: AIRFLOW__CORE__FERNET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: orchestration-fernet-key
+                  key: fernet-key
+            - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+              valueFrom:
+                secretKeyRef:
+                  name: orchestration-airflow-metadata
+                  key: connection
+            - name: AIRFLOW_CONN_AIRFLOW_DB
+              valueFrom:
+                secretKeyRef:
+                  name: orchestration-airflow-metadata
+                  key: connection
+          volumeMounts:
+            - name: config
+              mountPath: "/usr/local/airflow/airflow.cfg"
+              subPath: airflow.cfg
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: orchestration-airflow-config

@@ -1,0 +1,65 @@
+---
+# Source: airflow/templates/statsd/statsd-deployment.yaml
+################################
+## Airflow StatsD Deployment
+#################################
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: orchestration-statsd
+  namespace: safrarisk
+  labels:
+    tier: airflow
+    component: statsd
+    release: orchestration
+    chart: "airflow-0.17.0"
+    heritage: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: airflow
+      component: statsd
+      release: orchestration
+  template:
+    metadata:
+      labels:
+        tier: airflow
+        component: statsd
+        release: orchestration
+    spec:
+      nodeSelector:
+        {}
+      affinity:
+        {}
+      tolerations:
+        []
+      restartPolicy: Always
+      containers:
+        - name: statsd
+          image: astronomerinc/ap-statsd-exporter:0.17.0
+          imagePullPolicy: IfNotPresent
+          args:
+            - "--statsd.mapping-config=/etc/statsd-exporter/mappings.yml"
+          resources:
+            {}
+          ports:
+            - name: statsd-ingest
+              protocol: UDP
+              containerPort: 9125
+            - name: statsd-scrape
+              containerPort: 9102
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: 9102
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /metrics
+              port: 9102
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
