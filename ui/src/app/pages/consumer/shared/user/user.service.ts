@@ -8,15 +8,15 @@ export class UserService implements OnInit {
 
     ngOnInit(): void {
         this.user = new User();
-        this.user.first_name = 'José';
-        this.user.last_name = 'Silva';
+        this.user.firstName = 'José';
+        this.user.lastName = 'Silva';
         this.user.id = 1;
     }
 
     getUser() : User {
         this.user = new User();
-        this.user.first_name = 'José';
-        this.user.last_name = 'Silva';
+        this.user.firstName = 'José';
+        this.user.lastName = 'Silva';
         this.user.id = 1;
         return this.user;
     }

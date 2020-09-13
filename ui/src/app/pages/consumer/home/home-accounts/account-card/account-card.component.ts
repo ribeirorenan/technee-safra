@@ -19,7 +19,11 @@ export class AccountCardComponent implements OnInit {
   }
 
   openManageAccount() {
-    this.router.navigate(['pages/consumer/manage-account'])
+    this.router.navigate(['pages/consumer/manage-account'], {
+      state: {
+        data: this.account
+      }
+    })
   }
 
 }

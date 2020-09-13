@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import { UserService } from 'src/app/pages/consumer/shared/user/user.service';
+import { User } from 'src/app/pages/consumer/shared/user/user.model';
 
 @Component({
   selector: 'app-manage-account',
@@ -8,11 +10,22 @@ import { Router } from '@angular/router';
 })
 export class ManageAccountComponent implements OnInit {
 
+  account: Account;
+  user: User;
+
   constructor(
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
+    private userSerivce: UserService
   ) { }
 
   ngOnInit(): void {
+    this.route.data.subscribe(
+      (account) => {
+        this.account = history.state.data;
+        this.user = this.userSerivce.getUser();
+        console.log(this.account)
+      })
   }
 
   backToHome() {
