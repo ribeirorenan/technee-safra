@@ -19,6 +19,7 @@ import { AccountService } from './pages/consumer/shared/account/account.service'
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { UserService } from './pages/consumer/shared/user/user.service';
+import { AuthorizationService } from './pages/consumer/shared/authorization/authorization.service';
 
 
 @NgModule({
@@ -51,7 +52,8 @@ import { UserService } from './pages/consumer/shared/user/user.service';
   ],
   providers: [
     AccountService,
-    UserService
+    UserService,
+    AuthorizationService
   ],
   bootstrap: [AppComponent]
 })

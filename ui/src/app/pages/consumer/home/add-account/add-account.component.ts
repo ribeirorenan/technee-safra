@@ -37,7 +37,6 @@ export class AddAccountComponent implements OnInit {
 
     this.accountService.addAccount(account).subscribe(
       (res) => {
-        console.log(res);
         this.router.navigate(['pages/consumer/home']);
       },
       (error) => {

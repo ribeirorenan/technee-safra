@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { AuthorizationService } from '../../shared/authorization/authorization.service';
+import { Authorization } from '../../shared/authorization/authorization.model';
 
 @Component({
   selector: 'app-home-authorizations',
@@ -7,9 +9,18 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeAuthorizationsComponent implements OnInit {
 
-  constructor() { }
+  authorizations: Authorization[];
+
+  constructor(
+    private authorizationService: AuthorizationService
+  ) { }
 
   ngOnInit(): void {
+    this.authorizationService.getAuthorizations().subscribe(
+      (res: Authorization[]) => {
+        this.authorizations = res;
+      }
+    );
   }
 
 }

@@ -7,6 +7,10 @@
        </div>
     </nb-card-header>
     <nb-card-body class="example-items-rows">
-        <app-auth-card></app-auth-card>
+        <div class="d-flex flex-row justify-content-between flex-wrap">
+            <ng-container *ngFor="let authorization of authorizations">
+                <app-auth-card [authorization]="authorization"></app-auth-card>
+            </ng-container>
+        </div>
     </nb-card-body>
 </nb-card>

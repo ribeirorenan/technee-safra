@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Authorization } from '../../../shared/authorization/authorization.model';
 
 @Component({
   selector: 'app-manage-auth',
@@ -8,11 +9,21 @@ import { Router } from '@angular/router';
 })
 export class ManageAuthComponent implements OnInit {
 
+  authorization: Authorization
+
   constructor(
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
+    this.route.data.subscribe(
+      (data) => {
+        this.authorization = history.state.data;
+      }
+    )
+
+    console.log(this.route.url)
   }
 
   backToHome() {

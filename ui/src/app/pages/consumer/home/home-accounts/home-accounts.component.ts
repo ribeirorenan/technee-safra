@@ -21,7 +21,6 @@ export class HomeAccountsComponent implements OnInit {
     this.accountService.getAccounts().subscribe(
       (res: Account[]) => {
         this.accounts = res;
-        console.log(this.accounts);
       }
     );
   }

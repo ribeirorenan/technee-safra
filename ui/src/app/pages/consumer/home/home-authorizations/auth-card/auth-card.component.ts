@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, Input } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
+import { Authorization } from '../../../shared/authorization/authorization.model';
 
 @Component({
   selector: 'app-auth-card',
@@ -7,6 +8,9 @@ import { Router } from '@angular/router';
   styleUrls: ['./auth-card.component.scss']
 })
 export class AuthCardComponent implements OnInit {
+
+  @Input()
+  authorization: Authorization;
 
   constructor(
     private router: Router
@@ -16,7 +20,14 @@ export class AuthCardComponent implements OnInit {
   }
 
   openManageAuth() {
-    this.router.navigate(['pages/consumer/manage-auth'])
+    this.router.navigate(
+      ['pages/consumer/manage-auth'],
+      {
+        state: {
+          data: this.authorization
+        }
+      }
+    )
   }
 
 }
