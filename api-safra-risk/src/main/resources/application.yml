@@ -1,0 +1,47 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: backend
+  jackson:
+    default-property-inclusion: non_null
+    deserialization:
+      fail-on-unknown-properties: false
+  datasource:
+    url: jdbc:mysql://safra-technee.cg3pvgrq8xcs.us-east-2.rds.amazonaws.com:3306/safra-technee
+    host: safra-technee.cg3pvgrq8xcs.us-east-2.rds.amazonaws.com
+#    url: jdbc:mysql://localhost:3306/safra-technee?serverTimezone=UTC
+#    host: localhost
+    port: 3306
+    database: safra-technee
+    username: api
+    password: changeme
+    dialect: org.hibernate.dialect.MySQLDialect
+    driverClassName: com.mysql.cj.jdbc.Driver
+    testOnBorrow: true
+    initialSize: 10
+    maxActive: 30
+    maxPoolSize: 100
+    validationQuery: SELECT 1
+    jpa:
+      hibernate:
+        ddl-auto: update
+
+
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          key-value: classpath:jwt.pub
+#          user-name-claim-name: user_name
+#          authorities-claim-name: authorities
+#          authority-prefix: "ROLE_"
+#      custom:
+#        main-authority: ADMIN
+#        access-authority: USER
+
+#management:
+#  endpoints:
+#    web:
+#      base-path: /management
