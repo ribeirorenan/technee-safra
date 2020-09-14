@@ -11,7 +11,7 @@ O Safra Risk é uma plataforma digital de **SPC** (Serviço de Proteção ao Cr�
 Contém o aplicativo criado para a interface B2C entre o Usuário e o Safra Risk. Onde é possível gerenciar contas e permissões.
 
 ## Core
-Contém a API do Safra Risk. Realizando as regras de negócios e a interface tanto para o aplicativo B2C quanto para o B2B.
+Contém a API do Safra Risk, resposável por realizar as regras de negócios e a interface tanto para o aplicativo B2C quanto para o B2B.
 
 ## Data
 Contém o pipeline escalável para processamento e arquitetura de dados.
